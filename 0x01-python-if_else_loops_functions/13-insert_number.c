@@ -1,102 +1,55 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@EdenFenta 
-girum54
-/
-alx-higher_level_programming
-Public
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-alx-higher_level_programming/0x01-python-if_else_loops_functions/13-insert_number.c
-@girum54
-girum54 permissions updated
-Latest commit fa77167 yesterday
- History
- 1 contributor
-Executable File  74 lines (63 sloc)  1.25 KB
-   
-#include <stdio.h>
 #include <stdlib.h>
 #include "lists.h"
 
 /**
- * print_listint - prints all elements of a listint_t list
- * @h: pointer to head of list
- * Return: number of nodes
+ * insert_node - Inserts a number into a sorted singly linked list.
+ *
+ * @head: Double pointer to a singly linked list
+ *
+ * @number: Value of the new node.
+ *
+ * Return: The address of the new node, or NULL if it failed.
  */
-size_t print_listint(const listint_t *h)
+
+listint_t *insert_node(listint_t **head, int number)
 {
-	const listint_t *current;
-	unsigned int n; /* number of nodes */
+	int flag = 0;
+	listint_t *new_node = NULL, *actual = NULL, *after = NULL;
 
-	current = h;
-	n = 0;
-	while (current != NULL)
-	{
-		printf("%i\n", current->n);
-		current = current->next;
-		n++;
-	}
-
-	return (n);
-}
-
-/**
- * add_nodeint_end - adds a new node at the end of a listint_t list
- * @head: pointer to pointer of first node of listint_t list
- * @n: integer to be included in new node
- * Return: address of the new element or NULL if it fails
- */
-listint_t *add_nodeint_end(listint_t **head, const int n)
-{
-	listint_t *new;
-	listint_t *current;
-
-	current = *head;
-
-	new = malloc(sizeof(listint_t));
-	if (new == NULL)
+	if (head == NULL)
 		return (NULL);
-
-	new->n = n;
-	new->next = NULL;
-
+	new_node = malloc(sizeof(listint_t));
+	if (!new_node)
+		return (NULL);
+	new_node->n = number, new_node->next = NULL;
 	if (*head == NULL)
-		*head = new;
-	else
 	{
-		while (current->next != NULL)
-			current = current->next;
-		current->next = new;
+		*head = new_node;
+		return (*head);
 	}
-
-	return (new);
-}
-
-/**
- * free_listint - frees a listint_t list
- * @head: pointer to list to be freed
- * Return: void
- */
-void free_listint(listint_t *head)
-{
-	listint_t *current;
-
-	while (head != NULL)
+	actual = *head;
+	if (number <= actual->n)
 	{
-		current = head;
-		head = head->next;
-		free(current);
+		new_node->next = actual, *head = new_node;
+		return (*head);
 	}
+	if (number > actual->n && !actual->next)
+	{
+		actual->next = new_node;
+		return (new_node);
+	}
+	after = actual->next;
+	while (actual)
+	{
+		if (!after)
+			actual->next = new_node, flag = 1;
+		else if (after->n == number)
+			actual->next = new_node, new_node->next = after, flag = 1;
+		else if (after->n > number && actual->n < number)
+			actual->next = new_node, new_node->next = after, flag = 1;
+		if (flag)
+			break;
+		after = after->next, actual = actual->next;
+	}
+	return (new_node);
 }
